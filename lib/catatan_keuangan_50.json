@@ -1,0 +1,402 @@
+[
+  {
+    "id": "1",
+    "title": "Beli Sepatu",
+    "amount": 454079,
+    "type": "expense",
+    "date": "2025-05-01",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "2",
+    "title": "Belanja Mingguan",
+    "amount": 405554,
+    "type": "expense",
+    "date": "2025-05-02",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "3",
+    "title": "Donasi",
+    "amount": 53369,
+    "type": "expense",
+    "date": "2025-05-03",
+    "note": "Pekerjaan tambahan"
+  },
+  {
+    "id": "4",
+    "title": "Donasi",
+    "amount": 466485,
+    "type": "expense",
+    "date": "2025-05-04",
+    "note": "Tagihan"
+  },
+  {
+    "id": "5",
+    "title": "Freelance Website",
+    "amount": 3716597,
+    "type": "income",
+    "date": "2025-05-05",
+    "note": "Kebutuhan sehari-hari"
+  },
+  {
+    "id": "6",
+    "title": "Makan malam",
+    "amount": 47166,
+    "type": "expense",
+    "date": "2025-05-06",
+    "note": "Hadiah"
+  },
+  {
+    "id": "7",
+    "title": "Laundry",
+    "amount": 96961,
+    "type": "expense",
+    "date": "2025-05-07",
+    "note": "Untuk hiburan"
+  },
+  {
+    "id": "8",
+    "title": "Bayar Listrik",
+    "amount": 209404,
+    "type": "expense",
+    "date": "2025-05-08",
+    "note": "Hadiah"
+  },
+  {
+    "id": "9",
+    "title": "Bensin",
+    "amount": 408741,
+    "type": "expense",
+    "date": "2025-05-09",
+    "note": "Transportasi"
+  },
+  {
+    "id": "10",
+    "title": "Reimburse",
+    "amount": 1489660,
+    "type": "income",
+    "date": "2025-05-10",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "11",
+    "title": "Makan siang",
+    "amount": 407984,
+    "type": "expense",
+    "date": "2025-05-11",
+    "note": "Tagihan"
+  },
+  {
+    "id": "12",
+    "title": "Makan malam",
+    "amount": 444625,
+    "type": "expense",
+    "date": "2025-05-12",
+    "note": "Kebutuhan sehari-hari"
+  },
+  {
+    "id": "13",
+    "title": "Parkir",
+    "amount": 257659,
+    "type": "expense",
+    "date": "2025-05-13",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "14",
+    "title": "Laundry",
+    "amount": 231002,
+    "type": "expense",
+    "date": "2025-05-14",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "15",
+    "title": "Uang THR",
+    "amount": 2672048,
+    "type": "income",
+    "date": "2025-05-15",
+    "note": "Hadiah"
+  },
+  {
+    "id": "16",
+    "title": "Bensin",
+    "amount": 186912,
+    "type": "expense",
+    "date": "2025-05-16",
+    "note": "Kebutuhan bulanan"
+  },
+  {
+    "id": "17",
+    "title": "Hadiah Ulang Tahun",
+    "amount": 110240,
+    "type": "expense",
+    "date": "2025-05-17",
+    "note": "Kebutuhan sehari-hari"
+  },
+  {
+    "id": "18",
+    "title": "Parkir",
+    "amount": 431641,
+    "type": "expense",
+    "date": "2025-05-18",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "19",
+    "title": "Makan malam",
+    "amount": 466417,
+    "type": "expense",
+    "date": "2025-05-19",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "20",
+    "title": "Uang THR",
+    "amount": 2169804,
+    "type": "income",
+    "date": "2025-05-20",
+    "note": "Kebutuhan bulanan"
+  },
+  {
+    "id": "21",
+    "title": "Parkir",
+    "amount": 293179,
+    "type": "expense",
+    "date": "2025-05-21",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "22",
+    "title": "Makan malam",
+    "amount": 274029,
+    "type": "expense",
+    "date": "2025-05-22",
+    "note": "Hadiah"
+  },
+  {
+    "id": "23",
+    "title": "Langganan Spotify",
+    "amount": 307857,
+    "type": "expense",
+    "date": "2025-05-23",
+    "note": "Transportasi"
+  },
+  {
+    "id": "24",
+    "title": "Langganan Spotify",
+    "amount": 244139,
+    "type": "expense",
+    "date": "2025-05-24",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "25",
+    "title": "Freelance Website",
+    "amount": 207937,
+    "type": "income",
+    "date": "2025-05-25",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "26",
+    "title": "Laundry",
+    "amount": 170070,
+    "type": "expense",
+    "date": "2025-05-26",
+    "note": "Tagihan"
+  },
+  {
+    "id": "27",
+    "title": "Makan malam",
+    "amount": 164354,
+    "type": "expense",
+    "date": "2025-05-27",
+    "note": "Tagihan"
+  },
+  {
+    "id": "28",
+    "title": "Belanja Mingguan",
+    "amount": 274197,
+    "type": "expense",
+    "date": "2025-05-28",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "29",
+    "title": "Makan siang",
+    "amount": 382492,
+    "type": "expense",
+    "date": "2025-05-29",
+    "note": "Transportasi"
+  },
+  {
+    "id": "30",
+    "title": "Uang Jasa Teman",
+    "amount": 4007980,
+    "type": "income",
+    "date": "2025-05-30",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "31",
+    "title": "Servis Motor",
+    "amount": 44987,
+    "type": "expense",
+    "date": "2025-05-31",
+    "note": "Transportasi"
+  },
+  {
+    "id": "32",
+    "title": "Beli Sepatu",
+    "amount": 266958,
+    "type": "expense",
+    "date": "2025-06-01",
+    "note": "Bayaran project"
+  },
+  {
+    "id": "33",
+    "title": "Parkir",
+    "amount": 106541,
+    "type": "expense",
+    "date": "2025-06-02",
+    "note": "Tagihan"
+  },
+  {
+    "id": "34",
+    "title": "Hadiah Ulang Tahun",
+    "amount": 356573,
+    "type": "expense",
+    "date": "2025-06-03",
+    "note": "Pekerjaan tambahan"
+  },
+  {
+    "id": "35",
+    "title": "Bayaran Coding Class",
+    "amount": 1340569,
+    "type": "income",
+    "date": "2025-06-04",
+    "note": "Transportasi"
+  },
+  {
+    "id": "36",
+    "title": "Bensin",
+    "amount": 358833,
+    "type": "expense",
+    "date": "2025-06-05",
+    "note": "Bayaran project"
+  },
+  {
+    "id": "37",
+    "title": "Belanja Mingguan",
+    "amount": 432063,
+    "type": "expense",
+    "date": "2025-06-06",
+    "note": "Tagihan"
+  },
+  {
+    "id": "38",
+    "title": "Ngopi",
+    "amount": 190532,
+    "type": "expense",
+    "date": "2025-06-07",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "39",
+    "title": "Langganan Canva Pro",
+    "amount": 329125,
+    "type": "expense",
+    "date": "2025-06-08",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "40",
+    "title": "Proyek UI",
+    "amount": 4651317,
+    "type": "income",
+    "date": "2025-06-09",
+    "note": "Untuk hiburan"
+  },
+  {
+    "id": "41",
+    "title": "Parkir",
+    "amount": 166282,
+    "type": "expense",
+    "date": "2025-06-10",
+    "note": "Bayaran project"
+  },
+  {
+    "id": "42",
+    "title": "Ngopi",
+    "amount": 35140,
+    "type": "expense",
+    "date": "2025-06-11",
+    "note": "Bayaran project"
+  },
+  {
+    "id": "43",
+    "title": "Servis Motor",
+    "amount": 349575,
+    "type": "expense",
+    "date": "2025-06-12",
+    "note": "Belanja pribadi"
+  },
+  {
+    "id": "44",
+    "title": "Belanja Mingguan",
+    "amount": 401412,
+    "type": "expense",
+    "date": "2025-06-13",
+    "note": "Pekerjaan tambahan"
+  },
+  {
+    "id": "45",
+    "title": "Bayaran Desain Poster",
+    "amount": 3498381,
+    "type": "income",
+    "date": "2025-06-14",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "46",
+    "title": "Beli Pulsa",
+    "amount": 250040,
+    "type": "expense",
+    "date": "2025-06-15",
+    "note": "Pembayaran rutin"
+  },
+  {
+    "id": "47",
+    "title": "Langganan Canva Pro",
+    "amount": 225083,
+    "type": "expense",
+    "date": "2025-06-16",
+    "note": "Transportasi"
+  },
+  {
+    "id": "48",
+    "title": "Beli Sepatu",
+    "amount": 451443,
+    "type": "expense",
+    "date": "2025-06-17",
+    "note": "Transportasi"
+  },
+  {
+    "id": "49",
+    "title": "Laundry",
+    "amount": 96176,
+    "type": "expense",
+    "date": "2025-06-18",
+    "note": "Transportasi"
+  },
+  {
+    "id": "50",
+    "title": "Penjualan barang bekas",
+    "amount": 1840513,
+    "type": "income",
+    "date": "2025-06-19",
+    "note": "Untuk hiburan"
+  }
+]
