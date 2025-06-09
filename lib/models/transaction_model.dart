@@ -1,12 +1,34 @@
-class TransactionModel {
+import 'package:hive/hive.dart';
+
+part 'transaction_model.g.dart';
+
+@HiveType(typeId: 2)
+class TransactionModel extends HiveObject {
+  @HiveField(0)
   final int? id;
+
+  @HiveField(1)
   final String? remoteId;
+
+  @HiveField(2)
   final String title;
+
+  @HiveField(3)
   final double amount;
+
+  @HiveField(4)
   final String category;
+
+  @HiveField(5)
   final String type;
+
+  @HiveField(6)
   final String date;
+
+  @HiveField(7)
   final String note;
+
+  @HiveField(8)
   final int userId;
 
   TransactionModel({
@@ -55,6 +77,7 @@ class TransactionModel {
   // Untuk insert/update ke database lokal
   Map<String, Object?> toLocalJson() {
     return {
+      'id': id,
       'remote_id': remoteId,
       'title': title,
       'amount': amount,

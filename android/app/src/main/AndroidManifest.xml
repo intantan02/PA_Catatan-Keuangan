@@ -43,3 +43,25 @@
         </intent>
     </queries>
 </manifest>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.catatan_keuangan">
+
+    <!-- Permission baca/tulis storage (Android <= 10) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <application
+        android:label="catatan_keuangan"
+        android:name="${applicationName}"
+        android:icon="@mipmap/ic_launcher">
+        <!-- ... aktivitas dll ... -->
+    </application>
+
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
+

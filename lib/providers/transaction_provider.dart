@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../data/repositories/transaction_repository.dart';
+import 'package:hive/hive.dart';
 import '../models/transaction_model.dart';
 
 class TransactionProvider with ChangeNotifier {
-  final TransactionRepository _repository = TransactionRepository();
+  static const String transactionBoxName = 'transactions';
 
   int _userId = 0;
   set userId(int value) {
     _userId = value;
-    loadTransactions();
+    loadTransactions(userId: _userId);
   }
 
   List<TransactionModel> _transactions = [];
@@ -20,29 +20,19 @@ class TransactionProvider with ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  Future<void> loadTransactions() async {
+  Future<void> loadTransactions({int? userId}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final localData = await _repository.getLocalTransactionsByUser(_userId);
-      _transactions = localData;
-
-      final remoteData = await _repository.getAllRemoteTransactions();
-      final localByRemoteId = {
-        for (var tx in localData) if (tx.remoteId != null) tx.remoteId!: tx
-      };
-
-      for (var remoteTx in remoteData) {
-        if (!localByRemoteId.containsKey(remoteTx.remoteId)) {
-          await _repository.insertLocalTransaction(
-            remoteTx.copyWith(userId: _userId),
-          );
-        }
-      }
-
-      _transactions = await _repository.getLocalTransactionsByUser(_userId);
+      final box = await Hive.openBox(transactionBoxName);
+      final txs = box.values
+          .where((e) => e['user_id'] == (userId ?? _userId))
+          .map((e) => TransactionModel.fromLocalJson(Map<String, dynamic>.from(e)))
+          .toList();
+      txs.sort((a, b) => b.date.compareTo(a.date));
+      _transactions = txs;
     } catch (e) {
       _transactions = [];
       _errorMessage = e.toString();
@@ -52,28 +42,28 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addTransaction(TransactionModel transaction) async {
+  /// ✅ Mengembalikan ID transaksi yang baru disimpan
+  Future<int?> addTransaction(TransactionModel transaction) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      final newLocalId = await _repository.insertLocalTransaction(
-        transaction.copyWith(userId: _userId),
-      );
-      final localTx = transaction.copyWith(id: newLocalId, userId: _userId);
+      final box = await Hive.openBox(transactionBoxName);
+      final id = box.length + 1;
+      final tx = transaction.copyWith(id: id, userId: _userId);
+      await box.put(id, tx.toLocalJson());
+      await loadTransactions(userId: _userId);
 
-      final remoteTx = await _repository.postTransactionRemote(localTx);
-      final updatedLocalTx = localTx.copyWith(remoteId: remoteTx.remoteId);
-
-      await _repository.updateLocalTransaction(updatedLocalTx);
-      _transactions = await _repository.getLocalTransactionsByUser(_userId);
+      _isLoading = false;
+      notifyListeners();
+      return id; // ⬅️ RETURN ID
     } catch (e) {
       _errorMessage = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return null; // ⬅️ Tetap return null kalau gagal
     }
-
-    _isLoading = false;
-    notifyListeners();
   }
 
   Future<void> updateTransaction(TransactionModel transaction) async {
@@ -82,22 +72,14 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (transaction.remoteId != null) {
-        final updatedRemoteTx = await _repository.updateTransactionRemote(transaction);
-        transaction = transaction.copyWith(
-          title: updatedRemoteTx.title,
-          amount: updatedRemoteTx.amount,
-          category: updatedRemoteTx.category,
-          type: updatedRemoteTx.type,
-          date: updatedRemoteTx.date,
-          note: updatedRemoteTx.note,
-        );
+      final box = await Hive.openBox(transactionBoxName);
+      if (transaction.id != null) {
+        await box.put(transaction.id, transaction.toLocalJson());
+        await loadTransactions(userId: _userId);
       }
-
-      await _repository.updateLocalTransaction(transaction);
-      _transactions = await _repository.getLocalTransactionsByUser(_userId);
     } catch (e) {
       _errorMessage = e.toString();
+      notifyListeners();
     }
 
     _isLoading = false;
@@ -110,15 +92,14 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (transaction.remoteId != null) {
-        await _repository.deleteTransactionRemote(transaction.remoteId!);
-      }
+      final box = await Hive.openBox(transactionBoxName);
       if (transaction.id != null) {
-        await _repository.deleteLocalTransaction(transaction.id!);
+        await box.delete(transaction.id);
+        await loadTransactions(userId: _userId);
       }
-      _transactions = await _repository.getLocalTransactionsByUser(_userId);
     } catch (e) {
       _errorMessage = e.toString();
+      notifyListeners();
     }
 
     _isLoading = false;

@@ -13,13 +13,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   bool _isLoading = false;
+  bool _obscurePassword = true;
+  bool _isInit = false;
 
   @override
   void initState() {
     super.initState();
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    _emailController = TextEditingController(text: userProvider.user?.email ?? '');
-    _passwordController = TextEditingController(text: userProvider.user?.password ?? '');
+    // Inisialisasi controller kosong dulu
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInit) {
+      final userProvider = Provider.of<UserProvider>(context);
+      _emailController.text = userProvider.user?.email ?? '';
+      _passwordController.text = userProvider.user?.password ?? '';
+      _isInit = true;
+    }
   }
 
   Future<void> _saveProfile() async {
@@ -35,12 +48,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile berhasil diperbarui')),
+        const SnackBar(content: Text('Profil berhasil diperbarui')),
       );
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal memperbarui profile')),
+        const SnackBar(content: Text('Gagal memperbarui profil')),
       );
     }
   }
@@ -54,8 +67,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    if (userProvider.user == null) {
+      return const Scaffold(
+        body: Center(child: Text('Silakan login terlebih dahulu')),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(title: const Text('Edit Profil')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -66,8 +86,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
+              obscureText: _obscurePassword,
             ),
             const SizedBox(height: 20),
             _isLoading

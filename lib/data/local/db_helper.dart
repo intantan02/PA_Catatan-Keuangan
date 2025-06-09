@@ -1,154 +1,91 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
-import '../../core/constants.dart';
+import 'package:hive/hive.dart';
+import '../../models/transaction_model.dart';
 
 class DBHelper {
-  DBHelper._privateConstructor();
-  static final DBHelper _instance = DBHelper._privateConstructor();
-  factory DBHelper() => _instance;
+  static const String userBoxName = 'users';
+  static const String transactionBoxName = 'transactions';
 
-  static Database? _db;
-
-  Future<Database> get database async {
-    if (_db != null) return _db!;
-    _db = await _initDB();
-    return _db!;
-  }
-
-  Future<Database> _initDB() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, AppConstants.databaseName);
-
-    return openDatabase(
-      path,
-      version: 3,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-    );
-  }
-
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT NOT NULL UNIQUE,
-        password TEXT NOT NULL
-      )
-    ''');
-
-    await db.execute('''
-      CREATE TABLE transactions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        remote_id TEXT,
-        title TEXT NOT NULL,
-        amount REAL NOT NULL,
-        category TEXT NOT NULL,
-        type TEXT NOT NULL,
-        date TEXT NOT NULL,
-        note TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
-      )
-    ''');
-  }
-
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 2) {
-      await db.execute('''
-        ALTER TABLE transactions ADD COLUMN remote_id TEXT
-      ''');
-    }
-    if (oldVersion < 3) {
-      await db.execute('DROP TABLE IF EXISTS users');
-      await db.execute('''
-        CREATE TABLE users (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          email TEXT NOT NULL UNIQUE,
-          password TEXT NOT NULL
-        )
-      ''');
-      await db.execute('''
-        ALTER TABLE transactions ADD COLUMN user_id INTEGER
-      ''');
-    }
-  }
-
-  // Register user pakai email
+  // Register user
   Future<int> registerUser(String email, String password) async {
-    final db = await database;
-    return await db.insert('users', {
-      'email': email,
-      'password': password,
-    });
+    final box = await Hive.openBox(userBoxName);
+    // Cek apakah email sudah ada
+    final existing = box.values.firstWhere(
+      (user) => user['email'] == email,
+      orElse: () => null,
+    );
+    if (existing != null) {
+      throw Exception('Email sudah terdaftar');
+    }
+    final id = box.length + 1;
+    await box.put(id, {'id': id, 'email': email, 'password': password});
+    return id;
   }
 
   // Login user by email & password
   Future<Map<String, dynamic>?> loginUser(String email, String password) async {
-    final db = await database;
-    final result = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
+    final box = await Hive.openBox(userBoxName);
+    final user = box.values.firstWhere(
+      (user) => user['email'] == email && user['password'] == password,
+      orElse: () => null,
     );
-    if (result.isNotEmpty) {
-      return result.first;
-    }
-    return null;
+    return user != null ? Map<String, dynamic>.from(user) : null;
   }
 
   // Get user by email
   Future<Map<String, dynamic>?> getUserByEmail(String email) async {
-    final db = await database;
-    final result = await db.query(
-      'users',
-      where: 'email = ?',
-      whereArgs: [email],
+    final box = await Hive.openBox(userBoxName);
+    final user = box.values.firstWhere(
+      (user) => user['email'] == email,
+      orElse: () => null,
     );
-    if (result.isNotEmpty) return result.first;
-    return null;
+    return user != null ? Map<String, dynamic>.from(user) : null;
   }
 
-  // Get user by email & password (untuk repository)
-  Future<Map<String, dynamic>?> getUserByEmailAndPassword(String email, String password) async {
-    final db = await database;
-    final result = await db.query(
-      'users',
-      where: 'email = ? AND password = ?',
-      whereArgs: [email, password],
-    );
-    if (result.isNotEmpty) {
-      return result.first;
-    }
-    return null;
-  }
-
-  // Update email dan password user berdasarkan id
-  Future<int> updateUser(int id, String newEmail, String newPassword) async {
-    final db = await database;
-    return await db.update(
-      'users',
-      {
+  // Update user
+  Future<void> updateUser(int id, String newEmail, String newPassword) async {
+    final box = await Hive.openBox(userBoxName);
+    final user = box.get(id);
+    if (user != null) {
+      await box.put(id, {
+        'id': id,
         'email': newEmail,
         'password': newPassword,
-      },
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+      });
+    }
   }
 
   // Get transactions by user_id
   Future<List<Map<String, dynamic>>> getTransactionsByUser(int userId) async {
-    final db = await database;
-    return await db.query(
-      'transactions',
-      where: 'user_id = ?',
-      whereArgs: [userId],
-      orderBy: 'date DESC',
-    );
+    final box = await Hive.openBox(transactionBoxName);
+    final txs = box.values
+        .where((tx) => tx['user_id'] == userId)
+        .map((tx) => Map<String, dynamic>.from(tx))
+        .toList();
+    txs.sort((a, b) => b['date'].compareTo(a['date']));
+    return txs;
+  }
+
+  // Add transaction
+  Future<int> addTransaction(Map<String, dynamic> tx) async {
+    final box = await Hive.openBox(transactionBoxName);
+    final id = box.length + 1;
+    await box.put(id, {...tx, 'id': id});
+    return id;
+  }
+
+  // Update transaction
+  Future<void> updateTransaction(int id, Map<String, dynamic> tx) async {
+    final box = await Hive.openBox(transactionBoxName);
+    await box.put(id, {...tx, 'id': id});
+  }
+
+  // Delete transaction
+  Future<void> deleteTransaction(int id) async {
+    final box = await Hive.openBox(transactionBoxName);
+    await box.delete(id);
   }
 
   Future<void> close() async {
-    final dbClient = await database;
-    await dbClient.close();
+    await Hive.close();
   }
 }

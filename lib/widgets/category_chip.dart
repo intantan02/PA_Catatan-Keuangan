@@ -1,5 +1,5 @@
-// lib/widgets/category_chip.dart
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import '../models/category_model.dart';
 
 class CategoryChip extends StatelessWidget {

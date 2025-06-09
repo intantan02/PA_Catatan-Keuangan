@@ -1,13 +1,20 @@
-// lib/services/pdf_exporter.dart
 import 'dart:io';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
+import 'package:hive/hive.dart';
 import '../models/transaction_model.dart';
 
 class PdfExporter {
   final pw.Document pdf = pw.Document();
 
-  Future<File> generateTransactionReport(List<TransactionModel> transactions) async {
+  /// Generate laporan transaksi hanya untuk user tertentu dari Hive
+  Future<File> generateUserTransactionReport(int userId) async {
+    final box = await Hive.openBox('transactions');
+    final transactions = box.values
+        .where((e) => e['user_id'] == userId)
+        .map((e) => TransactionModel.fromLocalJson(Map<String, dynamic>.from(e)))
+        .toList();
+
     pdf.addPage(
       pw.Page(
         build: (context) {
@@ -31,7 +38,7 @@ class PdfExporter {
     );
 
     final output = await getTemporaryDirectory();
-    final file = File("${output.path}/laporan_transaksi.pdf");
+    final file = File("${output.path}/laporan_transaksi_user_$userId.pdf");
     await file.writeAsBytes(await pdf.save());
     return file;
   }

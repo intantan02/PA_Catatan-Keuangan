@@ -4,6 +4,7 @@ import '../../providers/category_provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../models/category_model.dart';
 import '../../models/transaction_model.dart';
+import 'transaction_detail.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   final int userId;
@@ -27,7 +28,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<CategoryProvider>(context, listen: false).loadCategories();
+      // Load kategori untuk user ini
+      Provider.of<CategoryProvider>(context, listen: false)
+          .loadCategories(userId: widget.userId);
+      // Set userId di TransactionProvider
+      Provider.of<TransactionProvider>(context, listen: false).userId = widget.userId;
     });
   }
 
@@ -43,7 +48,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate() || _selectedCategory == null) {
       if (_selectedCategory == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -52,6 +57,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       }
       return;
     }
+
     _formKey.currentState!.save();
 
     final newTx = TransactionModel(
@@ -66,10 +72,16 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       userId: widget.userId,
     );
 
-    await Provider.of<TransactionProvider>(context, listen: false)
+    final newId = await Provider.of<TransactionProvider>(context, listen: false)
         .addTransaction(newTx);
 
-    if (mounted) Navigator.of(context).pop();
+    if (mounted && newId != null) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => TransactionDetailScreen(transactionId: newId),
+        ),
+      );
+    }
   }
 
   @override
@@ -78,6 +90,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     final isLoading = categoryProvider.isLoading;
     final categories = categoryProvider.categories;
     final error = categoryProvider.errorMessage;
+
+    // Filter kategori sesuai tipe transaksi
+    final filteredCategories = categories.where((cat) => cat.type == _type).toList();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tambah Transaksi')),
@@ -94,20 +109,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         TextFormField(
                           decoration: const InputDecoration(labelText: 'Judul'),
                           validator: (val) =>
-                              (val == null || val.trim().isEmpty)
-                                  ? 'Harus diisi'
-                                  : null,
+                              (val == null || val.trim().isEmpty) ? 'Harus diisi' : null,
                           onSaved: (val) => _title = val!.trim(),
                         ),
                         const SizedBox(height: 12),
                         TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: 'Jumlah'),
+                          decoration: const InputDecoration(labelText: 'Jumlah'),
                           keyboardType: TextInputType.number,
                           validator: (val) {
-                            if (val == null || val.isEmpty) {
-                              return 'Harus diisi';
-                            }
+                            if (val == null || val.isEmpty) return 'Harus diisi';
                             final parsed = double.tryParse(val);
                             if (parsed == null || parsed <= 0) {
                               return 'Masukkan angka lebih dari 0';
@@ -118,9 +128,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<CategoryModel>(
-                          decoration:
-                              const InputDecoration(labelText: 'Kategori'),
-                          items: categories.map((cat) {
+                          decoration: const InputDecoration(labelText: 'Kategori'),
+                          items: filteredCategories.map((cat) {
                             return DropdownMenuItem(
                               value: cat,
                               child: Text(cat.name),
@@ -130,13 +139,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             setState(() => _selectedCategory = val);
                           },
                           value: _selectedCategory,
-                          validator: (val) =>
-                              val == null ? 'Pilih kategori' : null,
+                          validator: (val) => val == null ? 'Pilih kategori' : null,
                         ),
                         const SizedBox(height: 12),
                         DropdownButtonFormField<String>(
-                          decoration:
-                              const InputDecoration(labelText: 'Tipe'),
+                          decoration: const InputDecoration(labelText: 'Tipe'),
                           value: _type,
                           items: const [
                             DropdownMenuItem(
@@ -149,7 +156,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             ),
                           ],
                           onChanged: (val) {
-                            setState(() => _type = val!);
+                            setState(() {
+                              _type = val!;
+                              _selectedCategory = null; // Reset kategori jika tipe berubah
+                            });
                           },
                         ),
                         const SizedBox(height: 12),
@@ -162,8 +172,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         ),
                         const SizedBox(height: 12),
                         TextFormField(
-                          decoration:
-                              const InputDecoration(labelText: 'Catatan'),
+                          decoration: const InputDecoration(labelText: 'Catatan'),
                           maxLines: 3,
                           onSaved: (val) => _note = val?.trim() ?? '',
                         ),

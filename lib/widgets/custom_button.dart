@@ -1,5 +1,6 @@
 // lib/widgets/custom_button.dart
 import 'package:flutter/material.dart';
+// Tidak perlu import Hive di sini karena widget ini tidak berhubungan langsung dengan database Hive.
 
 class CustomButton extends StatelessWidget {
   final String label;

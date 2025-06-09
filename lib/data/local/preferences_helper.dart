@@ -1,38 +1,44 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
 class PreferencesHelper {
+  static const String _boxName = 'preferences';
+
+  static Future<Box> _getBox() async {
+    return await Hive.openBox(_boxName);
+  }
+
   static Future<void> setLoginStatus(bool status) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', status);
+    final box = await _getBox();
+    await box.put('isLoggedIn', status);
   }
 
   static Future<bool> getLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool('isLoggedIn') ?? false;
+    final box = await _getBox();
+    return box.get('isLoggedIn', defaultValue: false) as bool;
   }
 
   static Future<void> setUserEmail(String email) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userEmail', email);
+    final box = await _getBox();
+    await box.put('userEmail', email);
   }
 
   static Future<String?> getUserEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('userEmail');
+    final box = await _getBox();
+    return box.get('userEmail') as String?;
   }
 
   static Future<void> setUserId(int userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('userId', userId);
+    final box = await _getBox();
+    await box.put('userId', userId);
   }
 
   static Future<int?> getUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('userId');
+    final box = await _getBox();
+    return box.get('userId') as int?;
   }
 
   static Future<void> clearPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    final box = await _getBox();
+    await box.clear();
   }
 }

@@ -1,8 +1,11 @@
+import 'package:catatan_keuangan/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import '../../../data/local/db_helper.dart';
+import '../../../data/local/preferences_helper.dart';
 import '../home/home_screen.dart';
 import '../login/login_screen.dart';
+import '../../providers/user_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -30,15 +33,19 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // Simpan user baru ke DB lokal
+    // Simpan user baru ke Hive
     await _dbHelper.registerUser(email, password);
 
     // Login user langsung setelah register
     final user = await _dbHelper.loginUser(email, password);
     if (user != null) {
-      // Simpan userId ke SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt('userId', user['id'] as int);
+      // Simpan userId ke Hive preferences
+      await PreferencesHelper.setUserId(user['id'] as int);
+      await PreferencesHelper.setLoginStatus(true);
+      await PreferencesHelper.setUserEmail(user['email'] as String);
+
+      // Set user ke provider agar data user tersedia di seluruh aplikasi
+      Provider.of<UserProvider>(context, listen: false).setUserFromMap(user);
 
       // Navigasi ke HomeScreen, replace agar tidak bisa back ke register
       Navigator.pushReplacement(

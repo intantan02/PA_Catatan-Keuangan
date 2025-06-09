@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart' as provider;
+import 'package:hive/hive.dart';
 import '../../providers/user_provider.dart';
 import '../transaction/transaction_list.dart';
 import '../category/category_screen.dart';
@@ -25,19 +25,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadUserId() async {
-    final prefs = await SharedPreferences.getInstance();
+    final box = await Hive.openBox('preferences');
     setState(() {
-      userId = prefs.getInt('userId');
+      userId = box.get('userId') as int?;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    final userProvider = provider.Provider.of<UserProvider>(context, listen: false);
+
+    if (userId == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     final List<Widget> pages = [
-      TransactionListScreen(userId: userId),
-      const CategoryScreen(),
+      TransactionListScreen(userId: userId!),
+      CategoryScreen(userId: userId!),
       const SettingsScreen(),
     ];
 
@@ -48,8 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              final prefs = await SharedPreferences.getInstance();
-              await prefs.remove('userId');
+              final box = await Hive.openBox('preferences');
+              await box.delete('userId');
               await userProvider.logout();
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(builder: (_) => const LoginPage()),
@@ -59,9 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: userId == null
-          ? const Center(child: CircularProgressIndicator())
-          : pages[selectedIndex],
+      body: pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (idx) {

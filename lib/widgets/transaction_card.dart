@@ -5,11 +5,13 @@ import '../models/transaction_model.dart';
 class TransactionCard extends StatelessWidget {
   final TransactionModel transaction;
   final VoidCallback? onTap;
+  final Widget? trailing;
 
   const TransactionCard({
     super.key,
     required this.transaction,
     this.onTap,
+    this.trailing,
   });
 
   @override
@@ -39,18 +41,19 @@ class TransactionCard extends StatelessWidget {
         ),
         title: Text(transaction.title),
         subtitle: Text(formattedDate),
-        trailing: Text(
-          NumberFormat.currency(
-            locale: 'id_ID',
-            symbol: 'Rp ',
-            decimalDigits: 0,
-          ).format(transaction.amount),
-          style: TextStyle(
-            color: amountColor,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
+        trailing: trailing ??
+            Text(
+              NumberFormat.currency(
+                locale: 'id_ID',
+                symbol: 'Rp ',
+                decimalDigits: 0,
+              ).format(transaction.amount),
+              style: TextStyle(
+                color: amountColor,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
       ),
     );
   }

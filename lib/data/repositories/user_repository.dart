@@ -1,42 +1,46 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/local/db_helper.dart';
+import '../../data/local/preferences_helper.dart';
 
 class UserRepository {
-  static const _keyIsLoggedIn = 'isLoggedIn';
-  static const _keyUserEmail = 'userEmail';
-
   final DBHelper _dbHelper = DBHelper();
 
-  // Simpan status login di SharedPreferences
+  // Simpan status login di Hive
   Future<void> setLoginStatus(bool status) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_keyIsLoggedIn, status);
+    await PreferencesHelper.setLoginStatus(status);
   }
 
-  // Ambil status login dari SharedPreferences
+  // Ambil status login dari Hive
   Future<bool> getLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyIsLoggedIn) ?? false;
+    return await PreferencesHelper.getLoginStatus();
   }
 
-  // Simpan email user di SharedPreferences
+  // Simpan email user di Hive
   Future<void> setUserEmail(String email) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_keyUserEmail, email);
+    await PreferencesHelper.setUserEmail(email);
   }
 
-  // Ambil email user dari SharedPreferences
+  // Ambil email user dari Hive
   Future<String?> getUserEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_keyUserEmail);
+    return await PreferencesHelper.getUserEmail();
+  }
+
+  // Simpan userId di Hive
+  Future<void> setUserId(int userId) async {
+    await PreferencesHelper.setUserId(userId);
+  }
+
+  // Ambil userId dari Hive
+  Future<int?> getUserId() async {
+    return await PreferencesHelper.getUserId();
   }
 
   // Login dengan cek DB lokal, simpan status & email jika berhasil
   Future<bool> login(String email, String password) async {
-    final user = await _dbHelper.getUserByEmailAndPassword(email, password);
+    final user = await _dbHelper.loginUser(email, password);
     if (user != null) {
       await setLoginStatus(true);
       await setUserEmail(email);
+      await setUserId(user['id'] as int);
       return true;
     }
     return false;
@@ -47,19 +51,15 @@ class UserRepository {
     return await _dbHelper.getUserByEmail(email);
   }
 
-  // Update user (email dan password) di DB dan SharedPreferences
+  // Update user (email dan password) di DB dan Hive
   Future<bool> updateUser(int id, String newEmail, String newPassword) async {
-    final result = await _dbHelper.updateUser(id, newEmail, newPassword);
-    if (result > 0) {
-      await setUserEmail(newEmail);
-      return true;
-    }
-    return false;
+    await _dbHelper.updateUser(id, newEmail, newPassword);
+    await setUserEmail(newEmail);
+    return true;
   }
 
-  // Logout dan hapus semua data shared preferences
+  // Logout dan hapus semua data preferences Hive
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await PreferencesHelper.clearPreferences();
   }
 }

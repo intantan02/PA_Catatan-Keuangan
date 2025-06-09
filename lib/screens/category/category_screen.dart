@@ -4,7 +4,8 @@ import '../../providers/category_provider.dart';
 import '../../models/category_model.dart';
 
 class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+  final int userId; // userId wajib disertakan
+  const CategoryScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
@@ -19,7 +20,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<CategoryProvider>(context, listen: false).loadCategories();
+      Provider.of<CategoryProvider>(context, listen: false)
+          .loadCategories(userId: widget.userId);  // panggil dengan userId
     });
   }
 
@@ -75,12 +77,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   _formKey.currentState!.save();
+
                   final newCat = CategoryModel(
                     name: newCategoryName,
                     type: newCategoryType,
+                    userId: widget.userId, // pakai userId valid dari widget
                   );
+
                   await Provider.of<CategoryProvider>(context, listen: false)
                       .addCategory(newCat);
+
                   Navigator.of(context).pop();
                 }
               },
@@ -107,11 +113,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 final cat = categories[index];
                 return ListTile(
                   title: Text(cat.name),
-                  subtitle: Text(cat.type == 'income' ? 'Pemasukan' : 'Pengeluaran'),
+                  subtitle:
+                      Text(cat.type == 'income' ? 'Pemasukan' : 'Pengeluaran'),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
                     onPressed: () {
-                      categoryProvider.deleteCategory(cat.id!);
+                      if (cat.id != null) {
+                        categoryProvider.deleteCategory(cat.id!);
+                      }
                     },
                   ),
                 );
