@@ -1,43 +1,22 @@
-<<<<<<< HEAD
-// providers/transaction_provider.dart
-
-import 'package:flutter/material.dart';
-import '../../models/transaction_model.dart';
-import '../data/repositories/transaction_repository.dart';
-=======
 import 'package:flutter/material.dart';
 import '../data/repositories/transaction_repository.dart';
 import '../models/transaction_model.dart';
->>>>>>> 0c7b4a4 ( perbaikan file)
 
 class TransactionProvider with ChangeNotifier {
   final TransactionRepository _repository = TransactionRepository();
 
-<<<<<<< HEAD
-=======
-  int _userId = 0; // Default userId
+  int _userId = 0;
   set userId(int value) {
     _userId = value;
-    loadTransactions(); // otomatis load saat user berganti
+    loadTransactions();
   }
 
->>>>>>> 0c7b4a4 ( perbaikan file)
   List<TransactionModel> _transactions = [];
   List<TransactionModel> get transactions => _transactions;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-<<<<<<< HEAD
-  Future<void> loadTransactions() async {
-    _isLoading = true;
-    notifyListeners();
-
-    try {
-      _transactions = await _repository.getLocalTransactions();
-    } catch (e) {
-      _transactions = [];
-=======
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
@@ -67,7 +46,6 @@ class TransactionProvider with ChangeNotifier {
     } catch (e) {
       _transactions = [];
       _errorMessage = e.toString();
->>>>>>> 0c7b4a4 ( perbaikan file)
     }
 
     _isLoading = false;
@@ -75,10 +53,6 @@ class TransactionProvider with ChangeNotifier {
   }
 
   Future<void> addTransaction(TransactionModel transaction) async {
-<<<<<<< HEAD
-    await _repository.insertLocalTransaction(transaction);
-    _transactions.add(transaction);
-=======
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -148,7 +122,6 @@ class TransactionProvider with ChangeNotifier {
     }
 
     _isLoading = false;
->>>>>>> 0c7b4a4 ( perbaikan file)
     notifyListeners();
   }
 }

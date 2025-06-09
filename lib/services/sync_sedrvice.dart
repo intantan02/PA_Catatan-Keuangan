@@ -1,11 +1,9 @@
 // lib/services/sync_service.dart
 import '../data/remote/api_service.dart';
-import '../data/local/db_helper.dart';
 import '../models/transaction_model.dart';
 
 // lib/data/local/db_helper.dart
 
-import '../../models/transaction_model.dart';
 
 class DbHelper {
   Future<List<TransactionModel>> getAllTransactions() async {
@@ -34,7 +32,7 @@ class SyncService {
       List<TransactionModel> localTransactions = await dbHelper.getAllTransactions();
 
       // Kirim ke server
-      bool success = await apiService.uploadTransactions(localTransactions);
+      bool success = await ApiService.uploadTransactions(localTransactions);
 
       if (success) {
         // Tandai transaksi sudah sinkron (contoh)

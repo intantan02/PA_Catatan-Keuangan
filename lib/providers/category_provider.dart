@@ -1,14 +1,5 @@
-<<<<<<< HEAD
-// providers/category_provider.dart
-
-import 'package:flutter/material.dart';
-import '../../models/category_model.dart';
-=======
-// lib/providers/category_provider.dart
-
 import 'package:flutter/material.dart';
 import '../models/category_model.dart';
->>>>>>> 0c7b4a4 ( perbaikan file)
 import '../data/repositories/category_repository.dart';
 
 class CategoryProvider with ChangeNotifier {
@@ -17,33 +8,6 @@ class CategoryProvider with ChangeNotifier {
   List<CategoryModel> _categories = [];
   List<CategoryModel> get categories => _categories;
 
-<<<<<<< HEAD
-  bool get isLoading => null;
-
-  Future<void> loadCategories() async {
-    _categories = await _repository.getCategories();
-    notifyListeners();
-  }
-
-  Future<void> addCategory(CategoryModel category) async {
-    await _repository.insertCategory(category);
-    _categories.add(category);
-    notifyListeners();
-  }
-
-  Future<void> updateCategory(CategoryModel category) async {
-    await _repository.updateCategory(category);
-    final index = _categories.indexWhere((c) => c.id == category.id);
-    if (index != -1) {
-      _categories[index] = category;
-      notifyListeners();
-    }
-  }
-
-  Future<void> deleteCategory(int id) async {
-    await _repository.deleteCategory(id);
-    _categories.removeWhere((c) => c.id == id);
-=======
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -75,8 +39,33 @@ class CategoryProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final newCat = await _repository.insertCategory(category);
+      final id = await _repository.insertCategory(category);
+      final newCat = CategoryModel(
+        id: id,
+        name: category.name,
+        type: category.type,
+      );
       _categories.add(newCat);
+    } catch (e) {
+      _errorMessage = e.toString();
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Update kategori
+  Future<void> updateCategory(CategoryModel category) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _repository.updateCategory(category);
+      final index = _categories.indexWhere((c) => c.id == category.id);
+      if (index != -1) {
+        _categories[index] = category;
+      }
     } catch (e) {
       _errorMessage = e.toString();
     }
@@ -99,7 +88,6 @@ class CategoryProvider with ChangeNotifier {
     }
 
     _isLoading = false;
->>>>>>> 0c7b4a4 ( perbaikan file)
     notifyListeners();
   }
 }

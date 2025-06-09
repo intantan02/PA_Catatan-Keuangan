@@ -1,22 +1,14 @@
-<<<<<<< HEAD
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-=======
-// lib/presentation/pages/home_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
->>>>>>> 0c7b4a4 ( perbaikan file)
 import '../../providers/user_provider.dart';
 import '../transaction/transaction_list.dart';
 import '../category/category_screen.dart';
 import '../settings/settings_screen.dart';
-import '../../widgets/custom_button.dart';
 import '../login/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,18 +16,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-<<<<<<< HEAD
-
-  final List<Widget> screens = [
-    const TransactionListScreen(),
-    const CategoryScreen(),
-    const SettingsScreen(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-=======
   int? userId;
 
   @override
@@ -60,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
       const CategoryScreen(),
       const SettingsScreen(),
     ];
->>>>>>> 0c7b4a4 ( perbaikan file)
 
     return Scaffold(
       appBar: AppBar(
@@ -69,11 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-<<<<<<< HEAD
-              await authProvider.logout();
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (_) => LoginScreen()));
-=======
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('userId');
               await userProvider.logout();
@@ -81,18 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(builder: (_) => const LoginPage()),
                 (route) => false,
               );
->>>>>>> 0c7b4a4 ( perbaikan file)
             },
           ),
         ],
       ),
-<<<<<<< HEAD
-      body: screens[selectedIndex],
-=======
       body: userId == null
           ? const Center(child: CircularProgressIndicator())
           : pages[selectedIndex],
->>>>>>> 0c7b4a4 ( perbaikan file)
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: selectedIndex,
         onTap: (idx) {

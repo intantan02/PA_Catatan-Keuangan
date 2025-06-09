@@ -1,24 +1,14 @@
-<<<<<<< HEAD
-=======
-// lib/screens/transaction/transaction_list_screen.dart
-
->>>>>>> 0c7b4a4 ( perbaikan file)
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/transaction_provider.dart';
 import '../../widgets/transaction_card.dart';
 import 'add_transaction.dart';
-<<<<<<< HEAD
-
-class TransactionListScreen extends StatelessWidget {
-  const TransactionListScreen({Key? key}) : super(key: key);
-=======
 import 'transaction_detail.dart';
 
 class TransactionListScreen extends StatefulWidget {
   final int? userId;
 
-  const TransactionListScreen({Key? key, required this.userId}) : super(key: key);
+  const TransactionListScreen({super.key, required this.userId});
 
   @override
   State<TransactionListScreen> createState() => _TransactionListScreenState();
@@ -35,31 +25,10 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
       });
     }
   }
->>>>>>> 0c7b4a4 ( perbaikan file)
 
   @override
   Widget build(BuildContext context) {
     final transactionProvider = Provider.of<TransactionProvider>(context);
-<<<<<<< HEAD
-
-    return Scaffold(
-      body: transactionProvider.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : transactionProvider.transactions.isEmpty
-              ? const Center(child: Text('Belum ada transaksi'))
-              : ListView.builder(
-                  itemCount: transactionProvider.transactions.length,
-                  itemBuilder: (context, index) {
-                    final trx = transactionProvider.transactions[index];
-                    return TransactionCard(transaction: trx);
-                  },
-                ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const AddTransactionScreen()));
-=======
     final txList = transactionProvider.transactions;
     final isLoading = transactionProvider.isLoading;
     final error = transactionProvider.errorMessage;
@@ -123,18 +92,17 @@ class _TransactionListScreenState extends State<TransactionListScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => AddTransactionScreen(userId: widget.userId!),
-            ),
-          ).then((_) {
-            if (widget.userId != null) {
+          if (widget.userId != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => AddTransactionScreen(userId: widget.userId!),
+              ),
+            ).then((_) {
               Provider.of<TransactionProvider>(context, listen: false)
                   .loadTransactions();
-            }
-          });
->>>>>>> 0c7b4a4 ( perbaikan file)
+            });
+          }
         },
       ),
     );

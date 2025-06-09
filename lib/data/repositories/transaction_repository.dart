@@ -1,51 +1,11 @@
-<<<<<<< HEAD
-// data/repositories/transaction_repository.dart
-
-import '../local/db_helper.dart';
-import '../../models/transaction_model.dart';
-import '../remote/api_service.dart';
-=======
 import '../local/db_helper.dart';
 import '../../models/transaction_model.dart';
 import '../remote/api_service.dart';
 import 'package:sqflite/sqflite.dart';
->>>>>>> 0c7b4a4 ( perbaikan file)
 
 class TransactionRepository {
   final DBHelper _dbHelper = DBHelper();
 
-<<<<<<< HEAD
-  // Ambil data transaksi dari database lokal
-  Future<List<TransactionModel>> getLocalTransactions() async {
-    final db = await _dbHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query('transactions');
-    return List.generate(maps.length, (i) {
-      return TransactionModel(
-        id: maps[i]['id'],
-        title: maps[i]['title'],
-        amount: maps[i]['amount'],
-        category: maps[i]['category'],
-        type: maps[i]['type'],
-        date: maps[i]['date'],
-      );
-    });
-  }
-
-  // Simpan transaksi ke database lokal
-  Future<int> insertLocalTransaction(TransactionModel transaction) async {
-    final db = await _dbHelper.database;
-    return await db.insert('transactions', transaction.toJson());
-  }
-
-  // Ambil data transaksi dari API remote
-  Future<List<TransactionModel>> getRemoteTransactions() {
-    return ApiService.fetchTransactions();
-  }
-
-  // Kirim transaksi ke API remote
-  Future<bool> postTransactionRemote(TransactionModel transaction) {
-    return ApiService.postTransaction(transaction);
-=======
   /// 1️⃣ AMBIL SEMUA DARI LOKAL
   Future<List<TransactionModel>> getAllLocalTransactions() async {
     final db = await _dbHelper.database;
@@ -120,6 +80,5 @@ class TransactionRepository {
   /// 8️⃣ DELETE DI REMOTE
   Future<void> deleteTransactionRemote(String remoteId) async {
     return await ApiService.deleteTransaction(remoteId);
->>>>>>> 0c7b4a4 ( perbaikan file)
   }
 }

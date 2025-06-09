@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// data/local/preferences_helper.dart
-
-=======
->>>>>>> 0c7b4a4 ( perbaikan file)
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesHelper {
@@ -26,8 +21,6 @@ class PreferencesHelper {
     return prefs.getString('userEmail');
   }
 
-<<<<<<< HEAD
-=======
   static Future<void> setUserId(int userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('userId', userId);
@@ -38,7 +31,6 @@ class PreferencesHelper {
     return prefs.getInt('userId');
   }
 
->>>>>>> 0c7b4a4 ( perbaikan file)
   static Future<void> clearPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();

@@ -8,11 +8,11 @@ class CategoryChip extends StatelessWidget {
   final VoidCallback? onSelected;
 
   const CategoryChip({
-    Key? key,
+    super.key,
     required this.category,
     this.isSelected = false,
     this.onSelected,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

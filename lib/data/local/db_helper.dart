@@ -1,26 +1,13 @@
-<<<<<<< HEAD
-// data/local/db_helper.dart
-
-=======
->>>>>>> 0c7b4a4 ( perbaikan file)
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../../core/constants.dart';
 
 class DBHelper {
-<<<<<<< HEAD
-  static final DBHelper _instance = DBHelper._internal();
-  factory DBHelper() => _instance;
-  DBHelper._internal();
-
-  Database? _db;
-=======
   DBHelper._privateConstructor();
   static final DBHelper _instance = DBHelper._privateConstructor();
   factory DBHelper() => _instance;
 
   static Database? _db;
->>>>>>> 0c7b4a4 ( perbaikan file)
 
   Future<Database> get database async {
     if (_db != null) return _db!;
@@ -29,32 +16,6 @@ class DBHelper {
   }
 
   Future<Database> _initDB() async {
-<<<<<<< HEAD
-    final path = join(await getDatabasesPath(), AppConstants.databaseName);
-    return await openDatabase(
-      path,
-      version: 1,
-      onCreate: _onCreate,
-    );
-  }
-
-  Future _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE transactions(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT,
-        amount REAL,
-        category TEXT,
-        type TEXT,
-        date TEXT
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE categories(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        type TEXT
-=======
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, AppConstants.databaseName);
 
@@ -87,18 +48,10 @@ class DBHelper {
         date TEXT NOT NULL,
         note TEXT NOT NULL,
         FOREIGN KEY (user_id) REFERENCES users(id)
->>>>>>> 0c7b4a4 ( perbaikan file)
       )
     ''');
   }
 
-<<<<<<< HEAD
-  Future close() async {
-    final db = await database;
-    db.close();
-  }
-}
-=======
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute('''
@@ -169,7 +122,7 @@ class DBHelper {
     return null;
   }
 
-    // Update email dan password user berdasarkan id
+  // Update email dan password user berdasarkan id
   Future<int> updateUser(int id, String newEmail, String newPassword) async {
     final db = await database;
     return await db.update(
@@ -182,7 +135,6 @@ class DBHelper {
       whereArgs: [id],
     );
   }
-
 
   // Get transactions by user_id
   Future<List<Map<String, dynamic>>> getTransactionsByUser(int userId) async {
@@ -200,4 +152,3 @@ class DBHelper {
     await dbClient.close();
   }
 }
->>>>>>> 0c7b4a4 ( perbaikan file)
