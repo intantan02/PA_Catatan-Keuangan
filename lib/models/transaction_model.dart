@@ -43,6 +43,23 @@ class TransactionModel extends HiveObject {
     required this.userId,
   });
 
+  // ✅ Tambahan: Untuk data dari file JSON lokal (assets)
+  factory TransactionModel.fromJson(Map<String, dynamic> json) {
+    return TransactionModel(
+      id: json['id'] as int?,
+      remoteId: json['remote_id']?.toString(),
+      title: json['title']?.toString() ?? '',
+      amount: (json['amount'] is num)
+          ? (json['amount'] as num).toDouble()
+          : double.tryParse(json['amount'].toString()) ?? 0.0,
+      category: json['category']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      date: json['date']?.toString() ?? DateTime.now().toIso8601String(),
+      note: json['note']?.toString() ?? '',
+      userId: json['user_id'] as int? ?? 0,
+    );
+  }
+
   // Untuk data dari API (remote)
   factory TransactionModel.fromRemoteJson(Map<String, dynamic> json) {
     return TransactionModel(
@@ -55,7 +72,7 @@ class TransactionModel extends HiveObject {
       type: json['type']?.toString() ?? '',
       date: json['date']?.toString() ?? DateTime.now().toIso8601String(),
       note: json['note']?.toString() ?? '',
-      userId: 0, // Data remote biasanya tidak menyimpan userId lokal
+      userId: 0,
     );
   }
 
@@ -74,7 +91,6 @@ class TransactionModel extends HiveObject {
     );
   }
 
-  // Untuk insert/update ke database lokal
   Map<String, Object?> toLocalJson() {
     return {
       'id': id,
@@ -89,7 +105,6 @@ class TransactionModel extends HiveObject {
     };
   }
 
-  // Untuk insert/update ke API (remote)
   Map<String, dynamic> toRemoteJson() {
     return {
       'title': title,

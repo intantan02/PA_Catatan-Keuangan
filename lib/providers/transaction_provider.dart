@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:hive/hive.dart';
 import '../models/transaction_model.dart';
 
@@ -26,13 +28,23 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      final box = await Hive.openBox(transactionBoxName);
-      final txs = box.values
-          .where((e) => e['user_id'] == (userId ?? _userId))
-          .map((e) => TransactionModel.fromLocalJson(Map<String, dynamic>.from(e)))
-          .toList();
-      txs.sort((a, b) => b.date.compareTo(a.date));
-      _transactions = txs;
+      // ✅ Jika userId null → ambil data dari JSON lokal
+      if ((userId ?? _userId) == 0) {
+        final jsonStr = await rootBundle.loadString('assets/catatan_keuangan_50.json');
+        final jsonList = json.decode(jsonStr) as List;
+        _transactions = jsonList
+           .map((e) => TransactionModel.fromJson(Map<String, dynamic>.from(e)))
+            .toList();
+        _transactions.sort((a, b) => b.date.compareTo(a.date));
+      } else {
+        final box = await Hive.openBox(transactionBoxName);
+        final txs = box.values
+            .where((e) => e['user_id'] == (userId ?? _userId))
+            .map((e) => TransactionModel.fromLocalJson(Map<String, dynamic>.from(e)))
+            .toList();
+        txs.sort((a, b) => b.date.compareTo(a.date));
+        _transactions = txs;
+      }
     } catch (e) {
       _transactions = [];
       _errorMessage = e.toString();
@@ -42,7 +54,6 @@ class TransactionProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// ✅ Mengembalikan ID transaksi yang baru disimpan
   Future<int?> addTransaction(TransactionModel transaction) async {
     _isLoading = true;
     _errorMessage = null;
@@ -57,12 +68,12 @@ class TransactionProvider with ChangeNotifier {
 
       _isLoading = false;
       notifyListeners();
-      return id; // ⬅️ RETURN ID
+      return id;
     } catch (e) {
       _errorMessage = e.toString();
       _isLoading = false;
       notifyListeners();
-      return null; // ⬅️ Tetap return null kalau gagal
+      return null;
     }
   }
 

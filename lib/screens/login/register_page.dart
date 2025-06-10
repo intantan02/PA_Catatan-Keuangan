@@ -5,7 +5,6 @@ import '../../../data/local/db_helper.dart';
 import '../../../data/local/preferences_helper.dart';
 import '../home/home_screen.dart';
 import '../login/login_screen.dart';
-import '../../providers/user_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

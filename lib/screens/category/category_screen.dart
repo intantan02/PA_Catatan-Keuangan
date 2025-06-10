@@ -5,7 +5,7 @@ import '../../models/category_model.dart';
 
 class CategoryScreen extends StatefulWidget {
   final int userId; // userId wajib disertakan
-  const CategoryScreen({Key? key, required this.userId}) : super(key: key);
+  const CategoryScreen({super.key, required this.userId});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();

@@ -1,5 +1,4 @@
 import 'package:hive/hive.dart';
-import '../../models/transaction_model.dart';
 
 class DBHelper {
   static const String userBoxName = 'users';
